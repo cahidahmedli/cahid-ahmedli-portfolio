@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="az" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cahid Ahmedli — Senior Graphic & UX/UI Designer, Head of Design.">
+  <meta name="theme-color" content="#f4f4f0">
+  <title>Cahid Ahmedli — Design Portfolio</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="scroll-progress" aria-hidden="true"><span></span></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Cahid Ahmedli — ana səhifə">
+      <span class="brand-mark">CA</span>
+      <span class="brand-role">Graphic &amp;<br>UX/UI Designer</span>
+    </a>
+
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav">
+      <span></span><span></span>
+      <span class="sr-only" data-i18n="menu">Menyu</span>
+    </button>
+
+    <nav class="main-nav" id="main-nav" aria-label="Əsas naviqasiya">
+      <div class="nav-group">
+        <a href="work.html" data-i18n="navWork">İşlər</a>
+        <div class="nav-dropdown">
+          <a href="work.html#ui" data-i18n="catUi">UX/UI dizayn</a>
+          <a href="work.html#brand" data-i18n="catBrand">Loqo və brendinq</a>
+          <a href="work.html#print" data-i18n="catPrint">Flayer və bannerlər</a>
+          <a href="work.html#product" data-i18n="catProduct">Məhsul və promo</a>
+          <a href="work.html#social" data-i18n="catSocial">Sosial media</a>
+        </div>
+      </div>
+      <a href="#about" data-i18n="navAbout">Haqqımda</a>
+      <a href="#experience" data-i18n="navExperience">Təcrübə</a>
+      <a href="#contact" data-i18n="navContact">Əlaqə</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="lang-toggle" type="button" aria-label="Dili dəyiş" title="Dili dəyiş">
+        <span class="lang-current">AZ</span><span class="slash">/</span><span class="lang-next">EN</span>
+      </button>
+      <button class="theme-toggle" type="button" aria-label="Tünd rejimə keç" title="Görünüşü dəyiş">
+        <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 14.7A8.5 8.5 0 0 1 9.3 3.6 8.5 8.5 0 1 0 20.4 14.7Z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero section-pad" aria-labelledby="hero-title">
+      <div class="hero-kicker reveal">
+        <span class="availability-dot"></span>
+        <span data-i18n="heroKicker">Dizayn liderliyi və seçilmiş layihələr üçün açıq</span>
+      </div>
+      <h1 id="hero-title" class="hero-title reveal">
+        <span data-i18n="heroLine1">Mürəkkəb ideyaları</span>
+        <span class="hero-accent" data-i18n="heroLine2">aydın dizayna</span>
+        <span data-i18n="heroLine3">çevirirəm.</span>
+      </h1>
+      <div class="hero-bottom reveal">
+        <p data-i18n="heroIntro">10+ illik təcrübə ilə istifadəçi yönümlü rəqəmsal məhsullar və məqsədyönlü vizual kimliklər yaradıram.</p>
+        <a class="round-link" href="#work" aria-label="Seçilmiş işlərə keç">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v15M6 13l6 6 6-6"/></svg>
+        </a>
+      </div>
+      <div class="hero-meta reveal" aria-label="İxtisas sahələri">
+        <span>Design direction</span><span>UX/UI design</span><span>Brand identity</span><span>Baku · AZ</span>
+      </div>
+    </section>
+
+    <section class="work section-pad" id="work" aria-labelledby="work-title">
+      <div class="section-heading reveal">
+        <div>
+          <p class="eyebrow">01 / <span data-i18n="selected">Seçilmiş</span></p>
+          <h2 id="work-title" data-i18n="selectedWork">Seçilmiş işlər</h2>
+        </div>
+        <p data-i18n="workIntro">Məhsul strategiyasından vizual kimliyə qədər — fərqli sahələr üçün hazırlanmış işlər.</p>
+      </div>
+
+      <div class="filters reveal" role="group" aria-label="Layihələri filtrlə">
+        <button class="filter is-active" type="button" data-filter="all" data-i18n="filterAll">Hamısı</button>
+        <button class="filter" type="button" data-filter="ui">UX/UI</button>
+        <button class="filter" type="button" data-filter="brand" data-i18n="filterBrand">Brendinq</button>
+      </div>
+
+      <div class="projects-grid">
+        <article class="project project-wide reveal" data-category="ui">
+          <a class="project-media" href="pasha-capital-dashboard.html" aria-label="PAŞA Kapital case study">
+            <img src="assets/projects/pasha-capital-dashboard.jpg" alt="PAŞA Kapital treyder idarə paneli dizaynı" loading="eager">
+            <span class="project-arrow" aria-hidden="true">↗</span>
+          </a>
+          <div class="project-info">
+            <div><span class="project-number">01</span><h3>PAŞA Kapital</h3></div>
+            <p data-i18n="pashaType">Treyder idarə paneli · UX/UI dizayn</p>
+            <span>2024</span>
+          </div>
+        </article>
+
+        <article class="project reveal" data-category="ui">
+          <a class="project-media" href="heydar-aliyev-foundation.html" aria-label="Heydər Əliyev Fondu case study">
+            <img src="assets/projects/heydar-aliyev-foundation.jpg" alt="Heydər Əliyev Fondu vebsayt dizaynı" loading="lazy">
+            <span class="project-arrow" aria-hidden="true">↗</span></a>
+          <div class="project-info">
+            <div><span class="project-number">02</span><h3 data-i18n="foundationName">Heydər Əliyev Fondu</h3></div>
+            <p data-i18n="foundationType">Vebsayt · UX/UI dizayn</p>
+          </div>
+        </article>
+
+        <article class="project reveal" data-category="ui">
+          <a class="project-media project-media-dark" href="azal-mobile-app.html" aria-label="Azərbaycan Hava Yolları case study">
+            <img src="assets/projects/azal-mobile-app.jpg" alt="Azərbaycan Hava Yolları mobil tətbiq dizaynı" loading="lazy">
+            <span class="project-arrow" aria-hidden="true">↗</span></a>
+          <div class="project-info">
+            <div><span class="project-number">03</span><h3>AZAL</h3></div>
+            <p data-i18n="azalType">Mobil tətbiq · UX/UI dizayn</p>
+          </div>
+        </article>
+
+        <article class="project reveal" data-category="ui">
+          <a class="project-media" href="birbank-mobile-app.html" aria-label="Birbank case study">
+            <img src="assets/projects/birbank-mobile-app.jpg" alt="Birbank mobil tətbiq dizaynı" loading="lazy">
+            <span class="project-arrow" aria-hidden="true">↗</span></a>
+          <div class="project-info">
+            <div><span class="project-number">04</span><h3>Birbank</h3></div>
+            <p data-i18n="birbankType">Mobil bankçılıq · UX/UI dizayn</p>
+          </div>
+        </article>
+
+        <article class="project reveal" data-category="brand">
+          <a class="project-media project-media-dark" href="naqshijahan-branding.html" aria-label="Nəqşicahan Qrup case study">
+            <img src="assets/projects/naqshijahan-branding.jpg" alt="Nəqşicahan Qrup vizual kimlik dizaynı" loading="lazy">
+            <span class="project-arrow" aria-hidden="true">↗</span></a>
+          <div class="project-info">
+            <div><span class="project-number">05</span><h3 data-i18n="naqName">Nəqşicahan Qrup</h3></div>
+            <p data-i18n="naqType">Vizual kimlik · Loqo dizaynı</p>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="about section-pad" id="about" aria-labelledby="about-title">
+      <div class="section-heading reveal">
+        <div>
+          <p class="eyebrow">02 / <span data-i18n="aboutShort">Haqqımda</span></p>
+          <h2 id="about-title" data-i18n="designBeyond">Görünüşdən daha artığı</h2>
+        </div>
+      </div>
+
+      <div class="about-layout">
+        <div class="about-statement reveal">
+          <p data-i18n="aboutLead">Dizaynı estetika ilə biznes məqsədləri arasında körpü kimi görürəm.</p>
+        </div>
+        <div class="about-copy reveal">
+          <p data-i18n="aboutP1">Senior Graphic & UX/UI Designer və Head of Design olaraq fintech, e-commerce, SaaS və brendinq sahələrində 100-dən çox layihə üzərində işləmişəm.</p>
+          <p data-i18n="aboutP2">Strategiya və araşdırmadan wireframe, dizayn sistemi və pixel-perfect icraya qədər bütün prosesi idarə edir, komandaları ortaq yaradıcı istiqamət ətrafında birləşdirirəm.</p>
+          <a class="text-link" href="assets/Cahid-Ahmedli-CV.pdf" download>
+            <span data-i18n="downloadCv">CV-ni yüklə</span><span>↓</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="stats reveal">
+        <div><strong>10+</strong><span data-i18n="years">il təcrübə</span></div>
+        <div><strong>100+</strong><span data-i18n="projects">tamamlanmış layihə</span></div>
+        <div><strong>04</strong><span data-i18n="focusAreas">əsas fokus sahəsi</span></div>
+      </div>
+    </section>
+
+    <section class="experience section-pad" id="experience" aria-labelledby="experience-title">
+      <div class="section-heading reveal">
+        <div>
+          <p class="eyebrow">03 / <span data-i18n="career">Karyera</span></p>
+          <h2 id="experience-title" data-i18n="experienceTitle">Təcrübə</h2>
+        </div>
+      </div>
+
+      <div class="timeline reveal">
+        <article>
+          <span class="timeline-date">2015 — <span data-i18n="present">indi</span></span>
+          <div><h3>Head of Design &amp; UX/UI Designer</h3><p data-i18n="investmentCompany">İnvestisiya şirkəti · Tam ştat</p></div>
+          <p data-i18n="exp1">Mobil tətbiqlər, veb platformalar, brend dizaynı və motion qrafika üzrə yaradıcı istiqamət və icra.</p>
+        </article>
+        <article>
+          <span class="timeline-date">2020 — 2025</span>
+          <div><h3>Senior Graphic &amp; UX/UI Designer</h3><p>Algoritma IT Company · Part-time</p></div>
+          <p data-i18n="exp2">Mobil və veb məhsullar üçün UX/UI, miqyaslana bilən dizayn sistemi və istifadəçi araşdırmaları.</p>
+        </article>
+        <article>
+          <span class="timeline-date">2013 — <span data-i18n="present">indi</span></span>
+          <div><h3>Freelance Designer</h3><p data-i18n="independent">Müstəqil</p></div>
+          <p data-i18n="exp3">Fintech, bankçılıq, e-commerce, aviasiya, avtomobil və daşınmaz əmlak sahələrində tam dizayn prosesi.</p>
+        </article>
+      </div>
+
+      <div class="services-grid reveal">
+        <article><span>01</span><h3>UX/UI &amp; Product Design</h3><p data-i18n="service1">Araşdırma, user flow, wireframe, prototip və dizayn sistemləri.</p></article>
+        <article><span>02</span><h3>Brand Identity</h3><p data-i18n="service2">Strategiyaya əsaslanan loqo və bütöv vizual kimlik sistemləri.</p></article>
+        <article><span>03</span><h3>Design Direction</h3><p data-i18n="service3">Dizayn komandalarının, proseslərin və yaradıcı keyfiyyətin idarə olunması.</p></article>
+        <article><span>04</span><h3>Motion &amp; Campaigns</h3><p data-i18n="service4">Rəqəmsal kampaniyalar, motion qrafika və sosial media sistemləri.</p></article>
+      </div>
+    </section>
+
+    <section class="contact section-pad" id="contact" aria-labelledby="contact-title">
+      <p class="eyebrow reveal">04 / <span data-i18n="contactShort">Əlaqə</span></p>
+      <div class="contact-main reveal">
+        <h2 id="contact-title"><span data-i18n="contactLine1">Növbəti yaxşı ideyanı</span><br><em data-i18n="contactLine2">birlikdə formalaşdıraq.</em></h2>
+        <a class="contact-circle" href="mailto:cahid.ahmedli@gmail.com" aria-label="E-poçt göndər">↗</a>
+      </div>
+      <div class="contact-links reveal">
+        <a href="mailto:cahid.ahmedli@gmail.com">cahid.ahmedli@gmail.com <span>↗</span></a>
+        <a href="https://linkedin.com/in/cahid-ahmedli/" target="_blank" rel="noreferrer">LinkedIn <span>↗</span></a>
+        <a href="https://behance.net/cahidahmedli" target="_blank" rel="noreferrer">Behance <span>↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer section-pad">
+    <p>© <span id="year"></span> Cahid Ahmedli</p>
+    <a href="#top"><span data-i18n="backTop">Yuxarı qayıt</span> ↑</a>
+  </footer>
+
+  <div class="cursor-dot" aria-hidden="true"></div>
+</body>
+</html>
