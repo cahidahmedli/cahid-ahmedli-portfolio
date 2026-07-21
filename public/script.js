@@ -6,7 +6,7 @@ const nav = document.querySelector('.main-nav');
 
 const translations = {
   az: {
-    menu: 'Menyu', navWork: 'İşlər', navAbout: 'Haqqımda', navExperience: 'Təcrübə', navContact: 'Əlaqə', catUi: 'UX/UI dizayn', catBrand: 'Loqo və brendinq', catPrint: 'Flayer və bannerlər', catProduct: 'Məhsul və promo', catSocial: 'Sosial media',
+    menu: 'Menyu', navWork: 'İşlər', navAbout: 'Haqqımda', navExperience: 'Təcrübə', navContact: 'Əlaqə', catUi: 'UX/UI dizayn', catBrand: 'Loqo və brendinq', catPrint: 'Flayer və bannerlər', catProduct: 'Məhsul və promo',
     heroKicker: 'Dizayn liderliyi və seçilmiş layihələr üçün açıq', heroLine1: 'Mürəkkəb ideyaları', heroLine2: 'aydın dizayna', heroLine3: 'çevirirəm.',
     heroIntro: '10+ illik təcrübə ilə istifadəçi yönümlü rəqəmsal məhsullar və məqsədyönlü vizual kimliklər yaradıram.',
     selected: 'Seçilmiş', selectedWork: 'Seçilmiş işlər', workIntro: 'Məhsul strategiyasından vizual kimliyə qədər — fərqli sahələr üçün hazırlanmış işlər.',
@@ -16,8 +16,8 @@ const translations = {
     approach: 'Yanaşma', approachTitle: 'İnformasiya iyerarxiyası əvvəl gəlir', pillar1Title: 'Sürətli baxış', pillar1Text: 'Balans, portfel bölgüsü və əsas statistika ilk ekranda prioritetləşdirildi.', pillar2Title: 'Modul sistem', pillar2Text: 'Kart əsaslı quruluş müxtəlif məlumat növlərinin ardıcıl təqdimatını təmin edir.', pillar3Title: 'Aydın hərəkətlər', pillar3Text: 'Əsas əməliyyatlar və dəstək kanalları görünən, rahat tapılan mövqelərdə saxlanıldı.',
     dashboardTitle: 'Əsas idarə paneli', dashboardText: 'Portfel göstəriciləri, statistik dinamika, seçilmiş aktivlər və əsas əməliyyatlar eyni baxışda təqdim olunur.', newsTitle: 'Xəbərlər və analitika', newsText: 'Kateqoriya filtrləri, gündəlik bazar xəbərləri və təlim videoları bir məlumat mərkəzində toplanır.', reportsTitle: 'Hesabatların oxunaqlılığı', reportsText: 'Əsas rəqəmlər, portfel cədvəlləri və qrafiklər pilləli vizual iyerarxiya ilə təşkil edilir.', supportTitle: 'Müraciət və dəstək', supportText: 'Yeni müraciət yaratmaq, əvvəlki müraciətlərə baxmaq və əlaqə kanallarına keçmək vahid səhifədə birləşdirilir.',
     systemTitle: 'Sakit vizual dil, güclü məlumat kontrastı', systemP1: 'Yaşıl əsas əməliyyat və müsbət göstəriciləri vurğulayır. Tünd qırmızı ikinci dərəcəli brend aksenti və əlaqə nöqtələri üçün istifadə olunur.', systemP2: 'Açıq neytral fon, incə sərhədlər və ölçülü rəng istifadəsi uzunmüddətli ekran baxışında diqqəti məzmun üzərində saxlayır.', nextStep: 'Növbəti', exploreMore: 'Daha çox layihəyə bax', nextProject: 'Növbəti layihə',
-    filterAll: 'Hamısı', filterBrand: 'Brendinq', filterPrint: 'Flayer və bannerlər', filterProduct: 'Məhsul və promo', filterSocial: 'Sosial media',
-    uiWork: 'Rəqəmsal məhsul · UX/UI dizayn', brandWork: 'Vizual kimlik · Loqo dizaynı', printWork: 'Kampaniya · Flayer və bannerlər', productWork: 'Məhsul və promo dizaynı', socialWork: 'Sosial media dizayn sistemi', centerName: 'Heydər Əliyev Mərkəzi', agbulagName: 'Ağbulaq Xizək Mərkəzi', gamigayaName: 'Gəmiqaya Holding', clockName: 'Saat Meydanı', bordoName: 'Bordo İnşaat', financeCampaigns: 'Maliyyə kampaniyaları', autoCampaigns: 'Avtomobil kampaniyaları',
+    filterAll: 'Hamısı', filterBrand: 'Brendinq', filterPrint: 'Flayer və bannerlər', filterProduct: 'Məhsul və promo',
+    uiWork: 'Rəqəmsal məhsul · UX/UI dizayn', brandWork: 'Vizual kimlik · Loqo dizaynı', printWork: 'Kampaniya · Flayer və bannerlər', productWork: 'Məhsul və promo dizaynı', centerName: 'Heydər Əliyev Mərkəzi', agbulagName: 'Ağbulaq Xizək Mərkəzi', gamigayaName: 'Gəmiqaya Holding', clockName: 'Saat Meydanı', bordoName: 'Bordo İnşaat',
     pashaType: 'Treyder idarə paneli · UX/UI dizayn', foundationName: 'Heydər Əliyev Fondu', foundationType: 'Vebsayt · UX/UI dizayn', azalType: 'Mobil tətbiq · UX/UI dizayn', birbankType: 'Mobil bankçılıq · UX/UI dizayn', naqName: 'Nəqşicahan Qrup', naqType: 'Vizual kimlik · Loqo dizaynı',
     aboutShort: 'Haqqımda', designBeyond: 'Görünüşdən daha artığı', aboutLead: 'Dizaynı estetika ilə biznes məqsədləri arasında körpü kimi görürəm.',
     aboutP1: 'Senior Graphic & UX/UI Designer və Head of Design olaraq fintech, e-commerce, SaaS və brendinq sahələrində 100-dən çox layihə üzərində işləmişəm.',
@@ -27,11 +27,11 @@ const translations = {
     exp1: 'Mobil tətbiqlər, veb platformalar, brend dizaynı və motion qrafika üzrə yaradıcı istiqamət və icra.',
     exp2: 'Mobil və veb məhsullar üçün UX/UI, miqyaslana bilən dizayn sistemi və istifadəçi araşdırmaları.',
     exp3: 'Fintech, bankçılıq, e-commerce, aviasiya, avtomobil və daşınmaz əmlak sahələrində tam dizayn prosesi.',
-    service1: 'Araşdırma, user flow, wireframe, prototip və dizayn sistemləri.', service2: 'Strategiyaya əsaslanan loqo və bütöv vizual kimlik sistemləri.', service3: 'Dizayn komandalarının, proseslərin və yaradıcı keyfiyyətin idarə olunması.', service4: 'Rəqəmsal kampaniyalar, motion qrafika və sosial media sistemləri.',
+    service1: 'Araşdırma, user flow, wireframe, prototip və dizayn sistemləri.', service2: 'Strategiyaya əsaslanan loqo və bütöv vizual kimlik sistemləri.', service3: 'Dizayn komandalarının, proseslərin və yaradıcı keyfiyyətin idarə olunması.', service4: 'Rəqəmsal kampaniyalar, motion qrafika və vizual kommunikasiya sistemləri.',
     contactShort: 'Əlaqə', contactLine1: 'Növbəti yaxşı ideyanı', contactLine2: 'birlikdə formalaşdıraq.', backTop: 'Yuxarı qayıt'
   },
   en: {
-    menu: 'Menu', navWork: 'Work', navAbout: 'About', navExperience: 'Experience', navContact: 'Contact', catUi: 'UX/UI design', catBrand: 'Logo & branding', catPrint: 'Flyers & banners', catProduct: 'Product & promo', catSocial: 'Social media',
+    menu: 'Menu', navWork: 'Work', navAbout: 'About', navExperience: 'Experience', navContact: 'Contact', catUi: 'UX/UI design', catBrand: 'Logo & branding', catPrint: 'Flyers & banners', catProduct: 'Product & promo',
     heroKicker: 'Open to design leadership and selected projects', heroLine1: 'Turning complex ideas', heroLine2: 'into clear design', heroLine3: 'experiences.',
     heroIntro: 'With 10+ years of experience, I create user-centered digital products and purposeful visual identities.',
     selected: 'Selected', selectedWork: 'Selected work', workIntro: 'From product strategy to visual identity — work created for a range of industries.',
@@ -41,8 +41,8 @@ const translations = {
     approach: 'Approach', approachTitle: 'Information hierarchy comes first', pillar1Title: 'Quick overview', pillar1Text: 'Balance, portfolio allocation, and key statistics are prioritized on the first screen.', pillar2Title: 'Modular system', pillar2Text: 'A card-based structure keeps different data types consistent and scalable.', pillar3Title: 'Clear actions', pillar3Text: 'Primary actions and support channels remain visible and easy to locate.',
     dashboardTitle: 'Main dashboard', dashboardText: 'Portfolio indicators, trends, selected assets, and primary actions are presented in one view.', newsTitle: 'News and analytics', newsText: 'Category filters, daily market news, and learning videos come together in one information hub.', reportsTitle: 'Readable reporting', reportsText: 'Key figures, portfolio tables, and charts are organized through a layered visual hierarchy.', supportTitle: 'Requests and support', supportText: 'Creating a request, reviewing previous cases, and reaching support channels are unified on one page.',
     systemTitle: 'Quiet visual language, strong data contrast', systemP1: 'Green highlights primary actions and positive indicators. Deep red acts as a secondary brand accent and marks contact points.', systemP2: 'A light neutral canvas, subtle borders, and measured color usage keep attention on content during extended screen use.', nextStep: 'Next', exploreMore: 'Explore more work', nextProject: 'Next project',
-    filterAll: 'All', filterBrand: 'Branding', filterPrint: 'Flyers & banners', filterProduct: 'Product & promo', filterSocial: 'Social media',
-    uiWork: 'Digital product · UX/UI design', brandWork: 'Visual identity · Logo design', printWork: 'Campaign · Flyers & banners', productWork: 'Product & promo design', socialWork: 'Social media design system', centerName: 'Heydar Aliyev Center', agbulagName: 'Agbulag Ski Center', gamigayaName: 'Gamigaya Holding', clockName: 'Clock Square', bordoName: 'Bordo Construction', financeCampaigns: 'Finance campaigns', autoCampaigns: 'Automotive campaigns',
+    filterAll: 'All', filterBrand: 'Branding', filterPrint: 'Flyers & banners', filterProduct: 'Product & promo',
+    uiWork: 'Digital product · UX/UI design', brandWork: 'Visual identity · Logo design', printWork: 'Campaign · Flyers & banners', productWork: 'Product & promo design', centerName: 'Heydar Aliyev Center', agbulagName: 'Agbulag Ski Center', gamigayaName: 'Gamigaya Holding', clockName: 'Clock Square', bordoName: 'Bordo Construction',
     pashaType: 'Trader dashboard · UX/UI design', foundationName: 'Heydar Aliyev Foundation', foundationType: 'Website · UX/UI design', azalType: 'Mobile app · UX/UI design', birbankType: 'Mobile banking · UX/UI design', naqName: 'Naqshijahan Group', naqType: 'Visual identity · Logo design',
     aboutShort: 'About', designBeyond: 'Beyond appearances', aboutLead: 'I see design as the bridge between aesthetics and business goals.',
     aboutP1: 'As a Senior Graphic & UX/UI Designer and Head of Design, I have delivered 100+ projects across fintech, e-commerce, SaaS, and branding.',
@@ -52,7 +52,7 @@ const translations = {
     exp1: 'Creative direction and execution across mobile apps, web platforms, brand design, and motion graphics.',
     exp2: 'UX/UI for mobile and web products, scalable design systems, and user research.',
     exp3: 'End-to-end design across fintech, banking, e-commerce, aviation, automotive, and real estate.',
-    service1: 'Research, user flows, wireframes, prototypes, and design systems.', service2: 'Strategy-led logos and complete visual identity systems.', service3: 'Leading design teams, workflows, and creative quality.', service4: 'Digital campaigns, motion graphics, and social media systems.',
+    service1: 'Research, user flows, wireframes, prototypes, and design systems.', service2: 'Strategy-led logos and complete visual identity systems.', service3: 'Leading design teams, workflows, and creative quality.', service4: 'Digital campaigns, motion graphics, and visual communication systems.',
     contactShort: 'Contact', contactLine1: 'Let’s shape the next', contactLine2: 'great idea together.', backTop: 'Back to top'
   }
 };
