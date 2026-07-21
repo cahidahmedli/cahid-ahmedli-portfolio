@@ -381,7 +381,7 @@ if (smoothWheel.matches && !reducedMotion.matches) {
 
   function renderSmoothScroll() {
     const distance = targetScroll - currentScroll;
-    currentScroll += distance * .115;
+    currentScroll += distance * .3;
 
     if (Math.abs(distance) < .35) {
       currentScroll = targetScroll;
