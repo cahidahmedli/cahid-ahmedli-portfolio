@@ -362,61 +362,6 @@ window.addEventListener('scroll', () => {
 
 document.querySelector('#year').textContent = new Date().getFullYear();
 
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-const smoothWheel = window.matchMedia('(hover: hover) and (pointer: fine)');
-
-if (smoothWheel.matches && !reducedMotion.matches) {
-  let currentScroll = window.scrollY;
-  let targetScroll = window.scrollY;
-  let scrollFrame = null;
-
-  const maximumScroll = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-
-  function stopSmoothScroll() {
-    if (scrollFrame) cancelAnimationFrame(scrollFrame);
-    scrollFrame = null;
-    currentScroll = window.scrollY;
-    targetScroll = window.scrollY;
-  }
-
-  function renderSmoothScroll() {
-    const distance = targetScroll - currentScroll;
-    currentScroll += distance * .3;
-
-    if (Math.abs(distance) < .35) {
-      currentScroll = targetScroll;
-      window.scrollTo(0, targetScroll);
-      scrollFrame = null;
-      return;
-    }
-
-    window.scrollTo(0, currentScroll);
-    scrollFrame = requestAnimationFrame(renderSmoothScroll);
-  }
-
-  window.addEventListener('wheel', (event) => {
-    if (event.ctrlKey || event.metaKey || event.shiftKey || event.defaultPrevented) return;
-    if (event.target instanceof Element && event.target.closest('textarea, select, [data-native-scroll]')) return;
-
-    event.preventDefault();
-    const multiplier = event.deltaMode === 1 ? 18 : event.deltaMode === 2 ? window.innerHeight : 1;
-    targetScroll = Math.min(maximumScroll(), Math.max(0, targetScroll + event.deltaY * multiplier));
-
-    if (!scrollFrame) {
-      currentScroll = window.scrollY;
-      scrollFrame = requestAnimationFrame(renderSmoothScroll);
-    }
-  }, { passive: false });
-
-  window.addEventListener('resize', () => {
-    targetScroll = Math.min(targetScroll, maximumScroll());
-  }, { passive: true });
-  window.addEventListener('pointerdown', stopSmoothScroll, { passive: true });
-  window.addEventListener('scroll', () => {
-    if (!scrollFrame) currentScroll = targetScroll = window.scrollY;
-  }, { passive: true });
-}
-
 if (window.matchMedia('(pointer: fine)').matches) {
   const cursor = document.querySelector('.cursor-dot');
   document.addEventListener('mousemove', (event) => {
