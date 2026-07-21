@@ -740,6 +740,54 @@ html[data-theme="dark"] .theme-toggle .moon { opacity: 1; transform: scale(1) ro
 body.cursor-active .cursor-dot { opacity: 1; }
 body.cursor-link .cursor-dot { width: 32px; height: 32px; }
 
+.sound-toggle {
+  position: fixed;
+  right: clamp(10px, 1.4vw, 22px);
+  bottom: clamp(18px, 3vw, 38px);
+  z-index: 110;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--header);
+  color: var(--muted);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  cursor: pointer;
+  font-size: 9px;
+  font-weight: 720;
+  letter-spacing: .14em;
+  line-height: 1;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  transition: border-color .25s ease, color .25s ease, background .25s ease;
+}
+
+.sound-toggle::before {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--muted);
+  content: "";
+  transition: background .25s ease, box-shadow .25s ease;
+}
+
+.sound-toggle:hover { border-color: var(--text); color: var(--text); }
+.sound-toggle.is-playing { color: var(--text); }
+.sound-toggle.is-playing::before {
+  background: var(--accent);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 18%, transparent);
+  animation: sound-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes sound-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent); }
+  50% { box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 22%, transparent); }
+}
+
 @media (max-width: 920px) {
   .site-header { grid-template-columns: 1fr auto auto; }
   .menu-toggle { display: grid; width: 42px; height: 42px; place-content: center; gap: 6px; }
@@ -813,9 +861,11 @@ body.cursor-link .cursor-dot { width: 32px; height: 32px; }
   .generic-principles article, .case-accent-card { min-height: 290px; }
   .site-footer { gap: 20px; }
   .cursor-dot { display: none; }
+  .sound-toggle { right: 8px; bottom: 14px; padding: 10px 7px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .reveal { opacity: 1; transform: none; }
+  .sound-toggle.is-playing::before { animation: none; }
 }

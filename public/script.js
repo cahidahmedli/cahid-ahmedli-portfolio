@@ -28,7 +28,7 @@ const translations = {
     exp2: 'Mobil və veb məhsullar üçün UX/UI, miqyaslana bilən dizayn sistemi və istifadəçi araşdırmaları.',
     exp3: 'Fintech, bankçılıq, e-commerce, aviasiya, avtomobil və daşınmaz əmlak sahələrində tam dizayn prosesi.',
     service1: 'Araşdırma, user flow, wireframe, prototip və dizayn sistemləri.', service2: 'Strategiyaya əsaslanan loqo və bütöv vizual kimlik sistemləri.', service3: 'Dizayn komandalarının, proseslərin və yaradıcı keyfiyyətin idarə olunması.', service4: 'Rəqəmsal kampaniyalar, motion qrafika və vizual kommunikasiya sistemləri.',
-    contactShort: 'Əlaqə', contactLine1: 'Növbəti yaxşı ideyanı', contactLine2: 'birlikdə formalaşdıraq.', backTop: 'Yuxarı qayıt'
+    contactShort: 'Əlaqə', contactLine1: 'Növbəti yaxşı ideyanı', contactLine2: 'birlikdə formalaşdıraq.', backTop: 'Yuxarı qayıt', soundOn: 'SƏS AÇIQ', soundOff: 'SƏS BAĞLI'
   },
   en: {
     menu: 'Menu', navWork: 'Work', navAbout: 'About', navExperience: 'Experience', navContact: 'Contact', catUi: 'UX/UI design', catBrand: 'Logo & branding', catPrint: 'Flyers & banners', catProduct: 'Product & promo',
@@ -53,9 +53,213 @@ const translations = {
     exp2: 'UX/UI for mobile and web products, scalable design systems, and user research.',
     exp3: 'End-to-end design across fintech, banking, e-commerce, aviation, automotive, and real estate.',
     service1: 'Research, user flows, wireframes, prototypes, and design systems.', service2: 'Strategy-led logos and complete visual identity systems.', service3: 'Leading design teams, workflows, and creative quality.', service4: 'Digital campaigns, motion graphics, and visual communication systems.',
-    contactShort: 'Contact', contactLine1: 'Let’s shape the next', contactLine2: 'great idea together.', backTop: 'Back to top'
+    contactShort: 'Contact', contactLine1: 'Let’s shape the next', contactLine2: 'great idea together.', backTop: 'Back to top', soundOn: 'SOUND ON', soundOff: 'SOUND OFF'
   }
 };
+
+const soundButton = document.createElement('button');
+soundButton.className = 'sound-toggle';
+soundButton.type = 'button';
+soundButton.setAttribute('aria-pressed', 'false');
+soundButton.innerHTML = '<span class="sound-label"></span>';
+document.body.appendChild(soundButton);
+
+let soundPlaying = false;
+let audioContext = null;
+let musicBus = null;
+let masterGain = null;
+let noiseBuffer = null;
+let musicTimer = null;
+let musicStep = 0;
+let nextMusicTime = 0;
+
+function updateSoundButton() {
+  const lang = translations[root.lang] ? root.lang : 'az';
+  const label = translations[lang][soundPlaying ? 'soundOn' : 'soundOff'];
+  soundButton.querySelector('.sound-label').textContent = label;
+  soundButton.setAttribute('aria-label', label);
+  soundButton.setAttribute('aria-pressed', String(soundPlaying));
+  soundButton.classList.toggle('is-playing', soundPlaying);
+}
+
+function createNoiseBuffer(context) {
+  const buffer = context.createBuffer(1, context.sampleRate, context.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let index = 0; index < data.length; index += 1) data[index] = Math.random() * 2 - 1;
+  return buffer;
+}
+
+function playTone(frequency, time, duration, options = {}) {
+  if (!audioContext || !musicBus) return;
+  const oscillator = audioContext.createOscillator();
+  const filter = audioContext.createBiquadFilter();
+  const gain = audioContext.createGain();
+  const attack = options.attack || .018;
+  const volume = options.volume || .018;
+
+  oscillator.type = options.type || 'sine';
+  oscillator.frequency.setValueAtTime(frequency, time);
+  filter.type = 'lowpass';
+  filter.frequency.setValueAtTime(options.cutoff || 1800, time);
+  filter.Q.setValueAtTime(.7, time);
+  gain.gain.setValueAtTime(.0001, time);
+  gain.gain.exponentialRampToValueAtTime(volume, time + attack);
+  gain.gain.exponentialRampToValueAtTime(.0001, time + duration);
+
+  oscillator.connect(filter);
+  filter.connect(gain);
+  gain.connect(musicBus);
+  oscillator.start(time);
+  oscillator.stop(time + duration + .04);
+}
+
+function playNoise(time, duration, volume, frequency) {
+  if (!audioContext || !musicBus || !noiseBuffer) return;
+  const source = audioContext.createBufferSource();
+  const filter = audioContext.createBiquadFilter();
+  const gain = audioContext.createGain();
+
+  source.buffer = noiseBuffer;
+  filter.type = 'highpass';
+  filter.frequency.setValueAtTime(frequency, time);
+  gain.gain.setValueAtTime(volume, time);
+  gain.gain.exponentialRampToValueAtTime(.0001, time + duration);
+  source.connect(filter);
+  filter.connect(gain);
+  gain.connect(musicBus);
+  source.start(time);
+  source.stop(time + duration);
+}
+
+function playSoftKick(time, volume = .035) {
+  if (!audioContext || !musicBus) return;
+  const oscillator = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+  oscillator.type = 'sine';
+  oscillator.frequency.setValueAtTime(92, time);
+  oscillator.frequency.exponentialRampToValueAtTime(44, time + .18);
+  gain.gain.setValueAtTime(volume, time);
+  gain.gain.exponentialRampToValueAtTime(.0001, time + .2);
+  oscillator.connect(gain);
+  gain.connect(musicBus);
+  oscillator.start(time);
+  oscillator.stop(time + .22);
+}
+
+const ambientChords = [
+  [220, 261.63, 329.63, 392],
+  [174.61, 220, 261.63, 329.63],
+  [196, 261.63, 329.63, 392],
+  [196, 246.94, 293.66, 329.63]
+];
+const ambientBass = [110, 87.31, 130.81, 98];
+const melodicSteps = [0, 2, 1, 3];
+const stepDuration = 60 / 82 / 4;
+
+function scheduleMusicStep(step, time) {
+  const bar = Math.floor(step / 16);
+  const position = step % 16;
+  const chord = ambientChords[bar];
+
+  if (position === 0) {
+    chord.forEach((frequency, index) => playTone(frequency, time, stepDuration * 15.6, {
+      type: index % 2 ? 'sine' : 'triangle',
+      volume: .012,
+      attack: .28,
+      cutoff: 1150
+    }));
+    playTone(ambientBass[bar], time, stepDuration * 7.4, { type: 'sine', volume: .028, attack: .04, cutoff: 420 });
+  }
+
+  if (position === 8) playTone(ambientBass[bar], time, stepDuration * 6.8, { type: 'sine', volume: .022, attack: .035, cutoff: 420 });
+  if (position === 0 || position === 8) playSoftKick(time, position === 0 ? .032 : .022);
+  if (position % 4 === 2) playNoise(time, .055, .0045, 5200);
+  if (position === 6 || position === 14) playNoise(time, .12, .006, 1900);
+
+  const melodyIndex = [2, 6, 10, 14].indexOf(position);
+  if (melodyIndex !== -1) {
+    playTone(chord[melodicSteps[melodyIndex]], time, stepDuration * 2.3, {
+      type: 'triangle',
+      volume: .014,
+      attack: .012,
+      cutoff: 2100
+    });
+  }
+}
+
+function scheduleMusic() {
+  if (!audioContext || !soundPlaying) return;
+  while (nextMusicTime < audioContext.currentTime + .18) {
+    scheduleMusicStep(musicStep, nextMusicTime);
+    nextMusicTime += stepDuration;
+    musicStep = (musicStep + 1) % 64;
+  }
+}
+
+async function startSound() {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) {
+    soundButton.hidden = true;
+    return;
+  }
+
+  try {
+    audioContext = new AudioContextClass();
+    await audioContext.resume();
+
+    musicBus = audioContext.createGain();
+    const toneFilter = audioContext.createBiquadFilter();
+    const compressor = audioContext.createDynamicsCompressor();
+    masterGain = audioContext.createGain();
+    noiseBuffer = createNoiseBuffer(audioContext);
+
+    musicBus.gain.setValueAtTime(.82, audioContext.currentTime);
+    toneFilter.type = 'lowpass';
+    toneFilter.frequency.setValueAtTime(2600, audioContext.currentTime);
+    compressor.threshold.setValueAtTime(-22, audioContext.currentTime);
+    compressor.knee.setValueAtTime(18, audioContext.currentTime);
+    compressor.ratio.setValueAtTime(3, audioContext.currentTime);
+    masterGain.gain.setValueAtTime(.0001, audioContext.currentTime);
+    masterGain.gain.exponentialRampToValueAtTime(.48, audioContext.currentTime + .35);
+
+    musicBus.connect(toneFilter);
+    toneFilter.connect(compressor);
+    compressor.connect(masterGain);
+    masterGain.connect(audioContext.destination);
+
+    soundPlaying = true;
+    musicStep = 0;
+    nextMusicTime = audioContext.currentTime + .08;
+    scheduleMusic();
+    musicTimer = window.setInterval(scheduleMusic, 60);
+    updateSoundButton();
+  } catch (error) {
+    soundPlaying = false;
+    updateSoundButton();
+  }
+}
+
+function stopSound() {
+  soundPlaying = false;
+  window.clearInterval(musicTimer);
+  musicTimer = null;
+  updateSoundButton();
+
+  const contextToClose = audioContext;
+  const gainToFade = masterGain;
+  audioContext = null;
+  musicBus = null;
+  masterGain = null;
+  noiseBuffer = null;
+
+  if (contextToClose && gainToFade) {
+    const now = contextToClose.currentTime;
+    gainToFade.gain.cancelScheduledValues(now);
+    gainToFade.gain.setValueAtTime(Math.max(gainToFade.gain.value, .0001), now);
+    gainToFade.gain.exponentialRampToValueAtTime(.0001, now + .22);
+    window.setTimeout(() => contextToClose.close(), 260);
+  }
+}
 
 function setTheme(theme) {
   root.dataset.theme = theme;
@@ -81,6 +285,7 @@ function setLanguage(lang) {
   else if (document.body.classList.contains('project-page')) document.title = lang === 'az' ? 'PAŞA Kapital — UX/UI layihəsi' : 'PAŞA Kapital — UX/UI Case Study';
   else if (document.body.classList.contains('work-page')) document.title = lang === 'az' ? 'Cahid Ahmedli — Bütün işlər' : 'Cahid Ahmedli — All Work';
   else document.title = lang === 'az' ? 'Cahid Ahmedli — Dizayn Portfoliosu' : 'Cahid Ahmedli — Design Portfolio';
+  updateSoundButton();
   localStorage.setItem('portfolio-lang', lang);
 }
 
@@ -91,6 +296,17 @@ setLanguage(localStorage.getItem('portfolio-lang') || 'az');
 
 themeButton.addEventListener('click', () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
 langButton.addEventListener('click', () => setLanguage(root.lang === 'az' ? 'en' : 'az'));
+soundButton.addEventListener('click', () => {
+  if (soundPlaying) stopSound();
+  else startSound();
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (!audioContext || !soundPlaying) return;
+  if (document.hidden) audioContext.suspend();
+  else audioContext.resume();
+});
+window.addEventListener('pagehide', stopSound, { once: true });
 
 menuButton.addEventListener('click', () => {
   const expanded = menuButton.getAttribute('aria-expanded') === 'true';
@@ -145,6 +361,61 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 document.querySelector('#year').textContent = new Date().getFullYear();
+
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const smoothWheel = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+if (smoothWheel.matches && !reducedMotion.matches) {
+  let currentScroll = window.scrollY;
+  let targetScroll = window.scrollY;
+  let scrollFrame = null;
+
+  const maximumScroll = () => Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+
+  function stopSmoothScroll() {
+    if (scrollFrame) cancelAnimationFrame(scrollFrame);
+    scrollFrame = null;
+    currentScroll = window.scrollY;
+    targetScroll = window.scrollY;
+  }
+
+  function renderSmoothScroll() {
+    const distance = targetScroll - currentScroll;
+    currentScroll += distance * .115;
+
+    if (Math.abs(distance) < .35) {
+      currentScroll = targetScroll;
+      window.scrollTo(0, targetScroll);
+      scrollFrame = null;
+      return;
+    }
+
+    window.scrollTo(0, currentScroll);
+    scrollFrame = requestAnimationFrame(renderSmoothScroll);
+  }
+
+  window.addEventListener('wheel', (event) => {
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.defaultPrevented) return;
+    if (event.target instanceof Element && event.target.closest('textarea, select, [data-native-scroll]')) return;
+
+    event.preventDefault();
+    const multiplier = event.deltaMode === 1 ? 18 : event.deltaMode === 2 ? window.innerHeight : 1;
+    targetScroll = Math.min(maximumScroll(), Math.max(0, targetScroll + event.deltaY * multiplier));
+
+    if (!scrollFrame) {
+      currentScroll = window.scrollY;
+      scrollFrame = requestAnimationFrame(renderSmoothScroll);
+    }
+  }, { passive: false });
+
+  window.addEventListener('resize', () => {
+    targetScroll = Math.min(targetScroll, maximumScroll());
+  }, { passive: true });
+  window.addEventListener('pointerdown', stopSmoothScroll, { passive: true });
+  window.addEventListener('scroll', () => {
+    if (!scrollFrame) currentScroll = targetScroll = window.scrollY;
+  }, { passive: true });
+}
 
 if (window.matchMedia('(pointer: fine)').matches) {
   const cursor = document.querySelector('.cursor-dot');
