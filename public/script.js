@@ -64,6 +64,7 @@ soundButton.setAttribute('aria-pressed', 'false');
 soundButton.innerHTML = '<span class="sound-label"></span>';
 document.body.appendChild(soundButton);
 
+const soundPreferenceKey = 'portfolio-sound';
 let soundPlaying = false;
 let audioContext = null;
 let musicBus = null;
@@ -72,6 +73,23 @@ let noiseBuffer = null;
 let musicTimer = null;
 let musicStep = 0;
 let nextMusicTime = 0;
+let soundStarting = false;
+
+function getSoundPreference() {
+  try {
+    return sessionStorage.getItem(soundPreferenceKey);
+  } catch (error) {
+    return null;
+  }
+}
+
+function setSoundPreference(isEnabled) {
+  try {
+    sessionStorage.setItem(soundPreferenceKey, isEnabled ? 'on' : 'off');
+  } catch (error) {
+    // The sound control still works when storage is unavailable.
+  }
+}
 
 function updateSoundButton() {
   const lang = translations[root.lang] ? root.lang : 'az';
@@ -196,13 +214,26 @@ function scheduleMusic() {
   }
 }
 
-async function startSound() {
+async function startSound({ rememberPreference = true } = {}) {
+  if (soundPlaying) return true;
+  if (rememberPreference) setSoundPreference(true);
+
+  if (soundStarting) {
+    try {
+      if (audioContext?.state === 'suspended') await audioContext.resume();
+    } catch (error) {
+      return false;
+    }
+    return soundPlaying;
+  }
+
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
   if (!AudioContextClass) {
     soundButton.hidden = true;
-    return;
+    return false;
   }
 
+  soundStarting = true;
   try {
     audioContext = new AudioContextClass();
     await audioContext.resume();
@@ -233,13 +264,24 @@ async function startSound() {
     scheduleMusic();
     musicTimer = window.setInterval(scheduleMusic, 60);
     updateSoundButton();
+    soundStarting = false;
+    return true;
   } catch (error) {
+    const contextToClose = audioContext;
     soundPlaying = false;
+    audioContext = null;
+    musicBus = null;
+    masterGain = null;
+    noiseBuffer = null;
+    if (contextToClose && contextToClose.state !== 'closed') contextToClose.close();
     updateSoundButton();
+    soundStarting = false;
+    return false;
   }
 }
 
-function stopSound() {
+function stopSound({ rememberPreference = true } = {}) {
+  if (rememberPreference) setSoundPreference(false);
   soundPlaying = false;
   window.clearInterval(musicTimer);
   musicTimer = null;
@@ -301,12 +343,19 @@ soundButton.addEventListener('click', () => {
   else startSound();
 });
 
+if (getSoundPreference() === 'on') {
+  const restoreSound = () => startSound({ rememberPreference: false });
+  document.addEventListener('pointerdown', restoreSound, { once: true, capture: true });
+  document.addEventListener('keydown', restoreSound, { once: true, capture: true });
+  restoreSound();
+}
+
 document.addEventListener('visibilitychange', () => {
   if (!audioContext || !soundPlaying) return;
   if (document.hidden) audioContext.suspend();
   else audioContext.resume();
 });
-window.addEventListener('pagehide', stopSound, { once: true });
+window.addEventListener('pagehide', () => stopSound({ rememberPreference: false }), { once: true });
 
 menuButton.addEventListener('click', () => {
   const expanded = menuButton.getAttribute('aria-expanded') === 'true';
@@ -355,21 +404,80 @@ if (document.body.classList.contains('work-page')) {
 }
 
 const progress = document.querySelector('.scroll-progress span');
-window.addEventListener('scroll', () => {
+const inkRevealElements = [...document.querySelectorAll([
+  '.hero-title > span',
+  '.section-heading h2',
+  '.about-statement p',
+  '.stats strong',
+  '.contact h2 > span',
+  '.contact h2 > em',
+  '.archive-hero h1',
+  '.case-hero h1 > span',
+  '.case-hero h1 > em',
+  '.case-section-title h2',
+  '.case-big-copy',
+  '.case-next strong',
+  '.archive-cta a'
+].join(','))];
+
+inkRevealElements.forEach((element) => element.classList.add('ink-reveal'));
+
+function updateScrollEffects() {
   const max = document.documentElement.scrollHeight - window.innerHeight;
-  progress.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
-}, { passive: true });
+  if (progress) progress.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
+
+  const revealStart = window.innerHeight * .88;
+  const revealDistance = window.innerHeight * .58;
+  inkRevealElements.forEach((element) => {
+    const rect = element.getBoundingClientRect();
+    const amount = Math.max(0, Math.min(1, (revealStart - rect.top) / Math.max(revealDistance, rect.height * .7)));
+    const progressValue = Math.round(amount * 100);
+    element.style.setProperty('--ink-progress', `${progressValue}%`);
+    element.style.setProperty('--ink-soft', `${Math.min(100, progressValue + 14)}%`);
+  });
+}
+
+let scrollFrame = null;
+function requestScrollEffects() {
+  if (scrollFrame) return;
+  scrollFrame = window.requestAnimationFrame(() => {
+    updateScrollEffects();
+    scrollFrame = null;
+  });
+}
+
+window.addEventListener('scroll', requestScrollEffects, { passive: true });
+window.addEventListener('resize', requestScrollEffects, { passive: true });
+updateScrollEffects();
 
 document.querySelector('#year').textContent = new Date().getFullYear();
 
 if (window.matchMedia('(pointer: fine)').matches) {
   const cursor = document.querySelector('.cursor-dot');
+  const displayTextSelector = '.hero-title, .section-heading h2, .about-statement p, .contact h2, .archive-hero h1, .case-hero h1, .case-section-title h2, .case-big-copy, .case-next strong';
+  const textSelector = 'h1, h2, h3, h4, p, strong, small, .brand-name, .eyebrow, .timeline-date, .project-number';
+  let activeTimelineRow = null;
   document.addEventListener('mousemove', (event) => {
-    cursor.style.transform = `translate(${event.clientX - 4}px, ${event.clientY - 4}px)`;
+    cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
     document.body.classList.add('cursor-active');
+
+    const target = event.target instanceof Element ? event.target : null;
+    const overDisplayText = Boolean(target?.closest(displayTextSelector));
+    const overText = Boolean(target?.closest(textSelector));
+    const overInteractive = Boolean(target?.closest('a, button, .project'));
+    const timelineRow = target?.closest('.timeline article') || null;
+    document.body.classList.toggle('cursor-display', overDisplayText);
+    document.body.classList.toggle('cursor-text', !overDisplayText && overText);
+    document.body.classList.toggle('cursor-link', !overDisplayText && !overText && overInteractive);
+    if (timelineRow !== activeTimelineRow) {
+      activeTimelineRow?.classList.remove('is-hovered');
+      timelineRow?.classList.add('is-hovered');
+      activeTimelineRow = timelineRow;
+    }
   });
-  document.querySelectorAll('a, button, .project').forEach((element) => {
-    element.addEventListener('mouseenter', () => document.body.classList.add('cursor-link'));
-    element.addEventListener('mouseleave', () => document.body.classList.remove('cursor-link'));
+  document.documentElement.addEventListener('mouseleave', () => {
+    activeTimelineRow?.classList.remove('is-hovered');
+    activeTimelineRow = null;
+    document.body.classList.remove('cursor-active', 'cursor-link', 'cursor-text', 'cursor-display');
   });
 }
