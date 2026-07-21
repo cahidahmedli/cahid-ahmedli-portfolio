@@ -651,6 +651,20 @@ html[data-theme="dark"] .theme-toggle .moon { opacity: 1; transform: scale(1) ro
   box-shadow: var(--shadow);
 }
 .detail-full img { width: 100%; border-radius: var(--radius); }
+.detail-sequence {
+  max-width: 1080px;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: calc(var(--radius) + 2px);
+  background: var(--bg);
+  box-shadow: var(--shadow);
+}
+.detail-sequence img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
 .detail-triptych {
   display: grid;
   max-width: 1080px;
