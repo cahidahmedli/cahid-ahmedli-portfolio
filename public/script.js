@@ -114,6 +114,7 @@ function playTone(frequency, time, duration, options = {}) {
   const gain = audioContext.createGain();
   const attack = options.attack || .018;
   const volume = options.volume || .018;
+  const release = Math.min(options.release || Math.min(.35, duration * .35), duration * .48);
 
   oscillator.type = options.type || 'sine';
   oscillator.frequency.setValueAtTime(frequency, time);
@@ -122,6 +123,7 @@ function playTone(frequency, time, duration, options = {}) {
   filter.Q.setValueAtTime(.7, time);
   gain.gain.setValueAtTime(.0001, time);
   gain.gain.exponentialRampToValueAtTime(volume, time + attack);
+  gain.gain.exponentialRampToValueAtTime(volume * .78, time + Math.max(attack, duration - release));
   gain.gain.exponentialRampToValueAtTime(.0001, time + duration);
 
   oscillator.connect(filter);
@@ -180,16 +182,17 @@ function scheduleMusicStep(step, time) {
   const chord = ambientChords[bar];
 
   if (position === 0) {
-    chord.forEach((frequency, index) => playTone(frequency, time, stepDuration * 15.6, {
+    chord.forEach((frequency, index) => playTone(frequency, time, stepDuration * 17.2, {
       type: index % 2 ? 'sine' : 'triangle',
       volume: .012,
-      attack: .28,
+      attack: .34,
+      release: .72,
       cutoff: 1150
     }));
-    playTone(ambientBass[bar], time, stepDuration * 7.4, { type: 'sine', volume: .028, attack: .04, cutoff: 420 });
+    playTone(ambientBass[bar], time, stepDuration * 8.8, { type: 'sine', volume: .028, attack: .04, release: .24, cutoff: 420 });
   }
 
-  if (position === 8) playTone(ambientBass[bar], time, stepDuration * 6.8, { type: 'sine', volume: .022, attack: .035, cutoff: 420 });
+  if (position === 8) playTone(ambientBass[bar], time, stepDuration * 8.8, { type: 'sine', volume: .022, attack: .035, release: .24, cutoff: 420 });
   if (position === 0 || position === 8) playSoftKick(time, position === 0 ? .032 : .022);
   if (position % 4 === 2) playNoise(time, .055, .0045, 5200);
   if (position === 6 || position === 14) playNoise(time, .12, .006, 1900);
@@ -207,7 +210,7 @@ function scheduleMusicStep(step, time) {
 
 function scheduleMusic() {
   if (!audioContext || !soundPlaying) return;
-  while (nextMusicTime < audioContext.currentTime + .18) {
+  while (nextMusicTime < audioContext.currentTime + .55) {
     scheduleMusicStep(musicStep, nextMusicTime);
     nextMusicTime += stepDuration;
     musicStep = (musicStep + 1) % 64;
@@ -343,12 +346,11 @@ soundButton.addEventListener('click', () => {
   else startSound();
 });
 
-if (getSoundPreference() === 'on') {
-  const restoreSound = () => startSound({ rememberPreference: false });
-  document.addEventListener('pointerdown', restoreSound, { once: true, capture: true });
-  document.addEventListener('keydown', restoreSound, { once: true, capture: true });
-  restoreSound();
-}
+setSoundPreference(true);
+const restoreSound = () => startSound({ rememberPreference: false });
+document.addEventListener('pointerdown', restoreSound, { once: true, capture: true });
+document.addEventListener('keydown', restoreSound, { once: true, capture: true });
+restoreSound();
 
 document.addEventListener('visibilitychange', () => {
   if (!audioContext || !soundPlaying) return;
@@ -381,6 +383,44 @@ document.querySelectorAll('.reveal').forEach((element, index) => {
   if (index < 5) element.style.transitionDelay = `${index * 70}ms`;
   revealObserver.observe(element);
 });
+
+const statCounters = [...document.querySelectorAll('.stats strong')];
+
+function animateStatCounter(element) {
+  const value = element.textContent.trim();
+  const match = value.match(/^(\d+)(.*)$/);
+  if (!match) return;
+
+  const target = Number(match[1]);
+  const suffix = match[2];
+  const digits = match[1].startsWith('0') ? match[1].length : 0;
+  const duration = Math.max(720, Math.min(1900, target * 18));
+  const startedAt = performance.now();
+  element.setAttribute('aria-label', value);
+
+  function draw(now) {
+    const progressValue = Math.min(1, (now - startedAt) / duration);
+    const current = Math.min(target, Math.max(1, Math.floor(progressValue * target)));
+    const number = digits ? String(current).padStart(digits, '0') : String(current);
+    element.textContent = `${number}${suffix}`;
+    if (progressValue < 1) window.requestAnimationFrame(draw);
+  }
+
+  window.requestAnimationFrame(draw);
+}
+
+if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  statCounters.forEach((counter) => counter.setAttribute('aria-label', counter.textContent.trim()));
+} else {
+  const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      animateStatCounter(entry.target);
+      counterObserver.unobserve(entry.target);
+    });
+  }, { threshold: .45 });
+  statCounters.forEach((counter) => counterObserver.observe(counter));
+}
 
 function applyProjectFilter(filter) {
   const available = [...document.querySelectorAll('.filter')].map((item) => item.dataset.filter);
@@ -425,12 +465,14 @@ inkRevealElements.forEach((element) => element.classList.add('ink-reveal'));
 function updateScrollEffects() {
   const max = document.documentElement.scrollHeight - window.innerHeight;
   if (progress) progress.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
+  const isAtPageEnd = max <= 0 || window.scrollY >= max - 3;
 
   const revealStart = window.innerHeight * .88;
   const revealDistance = window.innerHeight * .58;
   inkRevealElements.forEach((element) => {
     const rect = element.getBoundingClientRect();
-    const amount = Math.max(0, Math.min(1, (revealStart - rect.top) / Math.max(revealDistance, rect.height * .7)));
+    const measuredAmount = Math.max(0, Math.min(1, (revealStart - rect.top) / Math.max(revealDistance, rect.height * .7)));
+    const amount = isAtPageEnd && element.closest('.contact') ? 1 : measuredAmount;
     const progressValue = Math.round(amount * 100);
     element.style.setProperty('--ink-progress', `${progressValue}%`);
     element.style.setProperty('--ink-soft', `${Math.min(100, progressValue + 14)}%`);

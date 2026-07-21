@@ -5,8 +5,8 @@
   --text: #121212;
   --muted: #6d6d67;
   --line: rgba(18, 18, 18, .16);
-  --accent: #205cff;
-  --accent-contrast: #fff;
+  --accent: #f25536;
+  --accent-contrast: #111210;
   --header: rgba(244, 244, 240, .82);
   --shadow: 0 24px 60px rgba(20, 20, 18, .10);
   --pad: clamp(22px, 4.5vw, 72px);
@@ -21,7 +21,7 @@ html[data-theme="dark"] {
   --text: #f0f0ea;
   --muted: #a5a59d;
   --line: rgba(240, 240, 234, .17);
-  --accent: #7699ff;
+  --accent: #ff5a3c;
   --accent-contrast: #0c0d0b;
   --header: rgba(17, 18, 16, .84);
   --shadow: 0 24px 70px rgba(0, 0, 0, .34);
@@ -249,12 +249,12 @@ html[data-theme="dark"] .theme-toggle .moon { opacity: 1; transform: scale(1) ro
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #2bb966;
-  box-shadow: 0 0 0 5px rgba(43, 185, 102, .12);
+  background: var(--accent);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 16%, transparent);
   animation: pulse 2.5s infinite;
 }
 
-@keyframes pulse { 50% { box-shadow: 0 0 0 9px rgba(43, 185, 102, 0); } }
+@keyframes pulse { 50% { box-shadow: 0 0 0 9px color-mix(in srgb, var(--accent) 0%, transparent); } }
 
 .hero-title {
   max-width: 1360px;
@@ -459,7 +459,7 @@ html[data-theme="dark"] .theme-toggle .moon { opacity: 1; transform: scale(1) ro
 }
 
 .stats div { display: flex; min-height: 210px; flex-direction: column; justify-content: space-between; padding: clamp(26px, 3vw, 46px); background: var(--bg); }
-.stats strong { font-size: clamp(50px, 6vw, 95px); font-weight: 500; letter-spacing: -.07em; line-height: 1; }
+.stats strong { font-size: clamp(50px, 6vw, 95px); font-variant-numeric: tabular-nums; font-weight: 500; letter-spacing: -.07em; line-height: 1; }
 .stats span { color: var(--muted); font-size: 11px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; }
 
 .experience { background: var(--surface); }
@@ -778,6 +778,8 @@ html[data-theme="dark"] .theme-toggle .moon { opacity: 1; transform: scale(1) ro
   background-image: linear-gradient(90deg, var(--ink-color) 0, var(--ink-color) var(--ink-progress), var(--ink-muted) var(--ink-soft), var(--ink-muted) 100%);
   background-clip: text;
   color: transparent !important;
+  padding-block: .08em .14em;
+  margin-block: -.08em -.14em;
   -webkit-background-clip: text;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
