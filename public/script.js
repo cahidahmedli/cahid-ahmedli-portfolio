@@ -311,7 +311,7 @@ function setTheme(theme) {
   localStorage.setItem('portfolio-theme', theme);
   const isDark = theme === 'dark';
   themeButton.setAttribute('aria-label', isDark ? 'İşıqlı rejimə keç' : 'Tünd rejimə keç');
-  document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#111210' : '#f4f4f0');
+  document.querySelector('meta[name="theme-color"]').setAttribute('content', isDark ? '#181818' : '#ffffff');
 }
 
 function setLanguage(lang) {
@@ -499,6 +499,18 @@ if (window.matchMedia('(pointer: fine)').matches) {
   const displayTextSelector = '.hero-title, .section-heading h2, .about-statement p, .contact h2, .archive-hero h1, .case-hero h1, .case-section-title h2, .case-big-copy, .case-next strong';
   const textSelector = 'h1, h2, h3, h4, p, strong, small, .brand-name, .eyebrow, .timeline-date, .project-number';
   let activeTimelineRow = null;
+  let activeCursorColorTarget = null;
+
+  function clearCursorColorTarget() {
+    if (!activeCursorColorTarget) return;
+    activeCursorColorTarget.classList.remove('cursor-color-target');
+    activeCursorColorTarget.style.removeProperty('--cursor-local-x');
+    activeCursorColorTarget.style.removeProperty('--cursor-local-y');
+    activeCursorColorTarget.style.removeProperty('--cursor-cutout-radius');
+    activeCursorColorTarget.style.removeProperty('--cursor-base-color');
+    activeCursorColorTarget = null;
+  }
+
   document.addEventListener('mousemove', (event) => {
     cursor.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
     document.body.classList.add('cursor-active');
@@ -511,6 +523,28 @@ if (window.matchMedia('(pointer: fine)').matches) {
     document.body.classList.toggle('cursor-display', overDisplayText);
     document.body.classList.toggle('cursor-text', !overDisplayText && overText);
     document.body.classList.toggle('cursor-link', !overDisplayText && !overText && overInteractive);
+
+    const colorTarget = overDisplayText || overText
+      ? target?.closest('.ink-reveal') || target?.closest(textSelector)
+      : null;
+    if (colorTarget !== activeCursorColorTarget) {
+      clearCursorColorTarget();
+      if (colorTarget) {
+        if (!colorTarget.classList.contains('ink-reveal')) {
+          colorTarget.style.setProperty('--cursor-base-color', getComputedStyle(colorTarget).color);
+        }
+        colorTarget.classList.add('cursor-color-target');
+        activeCursorColorTarget = colorTarget;
+      }
+    }
+    if (activeCursorColorTarget) {
+      const rect = activeCursorColorTarget.getBoundingClientRect();
+      const displayDiameter = Math.min(230, Math.max(150, window.innerWidth * .14));
+      const radius = overDisplayText ? displayDiameter / 2 : 46;
+      activeCursorColorTarget.style.setProperty('--cursor-local-x', `${event.clientX - rect.left}px`);
+      activeCursorColorTarget.style.setProperty('--cursor-local-y', `${event.clientY - rect.top}px`);
+      activeCursorColorTarget.style.setProperty('--cursor-cutout-radius', `${radius}px`);
+    }
     if (timelineRow !== activeTimelineRow) {
       activeTimelineRow?.classList.remove('is-hovered');
       timelineRow?.classList.add('is-hovered');
@@ -520,6 +554,7 @@ if (window.matchMedia('(pointer: fine)').matches) {
   document.documentElement.addEventListener('mouseleave', () => {
     activeTimelineRow?.classList.remove('is-hovered');
     activeTimelineRow = null;
+    clearCursorColorTarget();
     document.body.classList.remove('cursor-active', 'cursor-link', 'cursor-text', 'cursor-display');
   });
 }
