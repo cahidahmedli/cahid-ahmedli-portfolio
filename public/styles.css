@@ -399,7 +399,8 @@ html[data-theme="dark"] .theme-toggle .moon { opacity: 1; transform: scale(1) ro
 }
 
 .project-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s cubic-bezier(.2,.7,.2,1), filter .5s ease; }
-.project-media.valyuta-project-media img { object-position: center top; }
+.project-media.valyuta-project-media img,
+.project-media.project-media-top img { object-position: center top; }
 .project:hover .project-media img { transform: scale(1.025); }
 .project:hover .project-media::after { opacity: 1; }
 
@@ -580,11 +581,13 @@ html[data-theme="dark"] .theme-toggle .moon { opacity: 1; transform: scale(1) ro
   border-radius: var(--radius);
 }
 
-.valyuta-project-page .case-cover {
+.valyuta-project-page .case-cover,
+.long-cover-page .case-cover {
   aspect-ratio: 16 / 10;
 }
 
-.valyuta-project-page .case-cover img {
+.valyuta-project-page .case-cover img,
+.long-cover-page .case-cover img {
   height: 100%;
   object-fit: cover;
   object-position: center top;
