@@ -110,27 +110,12 @@ img { display: block; max-width: 100%; }
   display: inline-flex;
   align-items: center;
   justify-self: start;
-  gap: 12px;
 }
 
-.brand-mark {
-  display: grid;
-  width: 42px;
-  height: 42px;
-  place-items: center;
-  border: 1px solid var(--text);
-  border-radius: 50%;
-  font-size: 12px;
-  font-weight: 760;
-  letter-spacing: -.03em;
-}
-
-.brand-role {
-  color: var(--muted);
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1.15;
-  text-transform: uppercase;
+.brand-name {
+  font-size: 15px;
+  font-weight: 720;
+  letter-spacing: -.025em;
 }
 
 .main-nav {
@@ -822,8 +807,7 @@ body.cursor-link .cursor-dot { width: 32px; height: 32px; }
 
 @media (max-width: 620px) {
   .site-header { min-height: 72px; }
-  .brand-role { display: none; }
-  .brand-mark { width: 38px; height: 38px; }
+  .brand-name { font-size: 14px; }
   .theme-toggle { width: 36px; height: 36px; }
   .main-nav { inset-block-start: 72px; }
   .hero { min-height: calc(100svh - 72px); padding-top: 65px; }
