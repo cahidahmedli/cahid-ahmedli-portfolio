@@ -331,13 +331,13 @@ function setLanguage(lang) {
   else if (document.body.classList.contains('work-page')) document.title = lang === 'az' ? 'Cahid Ahmedli — Bütün işlər' : 'Cahid Ahmedli — All Work';
   else document.title = lang === 'az' ? 'Cahid Ahmedli — Dizayn Portfoliosu' : 'Cahid Ahmedli — Design Portfolio';
   updateSoundButton();
-  localStorage.setItem('portfolio-lang', lang);
+  sessionStorage.setItem('portfolio-lang', lang);
 }
 
 const storedTheme = localStorage.getItem('portfolio-theme');
 const preferredTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 setTheme(storedTheme || preferredTheme);
-setLanguage(localStorage.getItem('portfolio-lang') || 'az');
+setLanguage(sessionStorage.getItem('portfolio-lang') || 'en');
 
 themeButton.addEventListener('click', () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
 langButton.addEventListener('click', () => setLanguage(root.lang === 'az' ? 'en' : 'az'));
