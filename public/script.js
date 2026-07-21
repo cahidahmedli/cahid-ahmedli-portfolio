@@ -500,6 +500,7 @@ if (window.matchMedia('(pointer: fine)').matches) {
   const textSelector = 'h1, h2, h3, h4, p, strong, small, .brand-name, .eyebrow, .timeline-date, .project-number';
   let activeTimelineRow = null;
   let activeCursorColorTarget = null;
+  let activeCursorLayer = null;
 
   function clearCursorColorTarget() {
     if (!activeCursorColorTarget) return;
@@ -509,6 +510,8 @@ if (window.matchMedia('(pointer: fine)').matches) {
     activeCursorColorTarget.style.removeProperty('--cursor-cutout-radius');
     activeCursorColorTarget.style.removeProperty('--cursor-base-color');
     activeCursorColorTarget = null;
+    activeCursorLayer?.classList.remove('cursor-layer-above');
+    activeCursorLayer = null;
   }
 
   document.addEventListener('mousemove', (event) => {
@@ -535,6 +538,8 @@ if (window.matchMedia('(pointer: fine)').matches) {
         }
         colorTarget.classList.add('cursor-color-target');
         activeCursorColorTarget = colorTarget;
+        activeCursorLayer = colorTarget.closest('.reveal') || colorTarget;
+        activeCursorLayer.classList.add('cursor-layer-above');
       }
     }
     if (activeCursorColorTarget) {
