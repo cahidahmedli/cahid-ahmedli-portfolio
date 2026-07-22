@@ -65,6 +65,7 @@ soundButton.innerHTML = '<span class="sound-label"></span>';
 document.body.appendChild(soundButton);
 
 const soundPreferenceKey = 'portfolio-sound';
+const musicEpochKey = 'portfolio-music-epoch';
 let soundPlaying = false;
 let audioContext = null;
 let musicBus = null;
@@ -175,6 +176,30 @@ const ambientChords = [
 const ambientBass = [110, 87.31, 130.81, 98];
 const melodicSteps = [0, 2, 1, 3];
 const stepDuration = 60 / 82 / 4;
+const phraseSteps = 64;
+const targetMasterVolume = .48;
+
+function getMusicEpoch() {
+  const now = Date.now();
+  try {
+    const storedEpoch = Number(sessionStorage.getItem(musicEpochKey));
+    if (Number.isFinite(storedEpoch) && storedEpoch > 0 && storedEpoch <= now) return storedEpoch;
+    sessionStorage.setItem(musicEpochKey, String(now));
+  } catch (error) {
+    // A page-local epoch still keeps the internal loop seamless.
+  }
+  return now;
+}
+
+function getSharedMusicPhase() {
+  const elapsed = Math.max(0, (Date.now() - getMusicEpoch()) / 1000);
+  const absoluteStep = elapsed / stepDuration;
+  const wholeStep = Math.floor(absoluteStep);
+  return {
+    currentStep: wholeStep % phraseSteps,
+    stepProgress: absoluteStep - wholeStep
+  };
+}
 
 function scheduleMusicStep(step, time) {
   const bar = Math.floor(step / 16);
@@ -210,11 +235,33 @@ function scheduleMusicStep(step, time) {
 
 function scheduleMusic() {
   if (!audioContext || !soundPlaying) return;
+  if (nextMusicTime < audioContext.currentTime - stepDuration * 2) alignMusicToSharedPhase();
   while (nextMusicTime < audioContext.currentTime + .55) {
     scheduleMusicStep(musicStep, nextMusicTime);
     nextMusicTime += stepDuration;
-    musicStep = (musicStep + 1) % 64;
+    musicStep = (musicStep + 1) % phraseSteps;
   }
+}
+
+function alignMusicToSharedPhase() {
+  if (!audioContext) return;
+  const { currentStep, stepProgress } = getSharedMusicPhase();
+  const now = audioContext.currentTime + .04;
+  const currentBarStart = Math.floor(currentStep / 16) * 16;
+
+  // Rebuild the pad that is already active in the shared phrase. This avoids
+  // restarting from bar one after an internal page change or mobile wake-up.
+  scheduleMusicStep(currentBarStart, now);
+  musicStep = (currentStep + 1) % phraseSteps;
+  nextMusicTime = now + Math.max(.035, (1 - stepProgress) * stepDuration);
+}
+
+function fadeMasterIn(duration = .72) {
+  if (!audioContext || !masterGain) return;
+  const now = audioContext.currentTime;
+  masterGain.gain.cancelScheduledValues(now);
+  masterGain.gain.setValueAtTime(.0001, now);
+  masterGain.gain.exponentialRampToValueAtTime(targetMasterVolume, now + duration);
 }
 
 async function startSound({ rememberPreference = true } = {}) {
@@ -240,6 +287,7 @@ async function startSound({ rememberPreference = true } = {}) {
   try {
     audioContext = new AudioContextClass();
     await audioContext.resume();
+    if (audioContext.state !== 'running') throw new Error('Audio playback needs a user gesture.');
 
     musicBus = audioContext.createGain();
     const toneFilter = audioContext.createBiquadFilter();
@@ -254,7 +302,6 @@ async function startSound({ rememberPreference = true } = {}) {
     compressor.knee.setValueAtTime(18, audioContext.currentTime);
     compressor.ratio.setValueAtTime(3, audioContext.currentTime);
     masterGain.gain.setValueAtTime(.0001, audioContext.currentTime);
-    masterGain.gain.exponentialRampToValueAtTime(.48, audioContext.currentTime + .35);
 
     musicBus.connect(toneFilter);
     toneFilter.connect(compressor);
@@ -262,8 +309,8 @@ async function startSound({ rememberPreference = true } = {}) {
     masterGain.connect(audioContext.destination);
 
     soundPlaying = true;
-    musicStep = 0;
-    nextMusicTime = audioContext.currentTime + .08;
+    alignMusicToSharedPhase();
+    fadeMasterIn();
     scheduleMusic();
     musicTimer = window.setInterval(scheduleMusic, 60);
     updateSoundButton();
@@ -347,17 +394,40 @@ soundButton.addEventListener('click', () => {
 });
 
 setSoundPreference(true);
-const restoreSound = () => startSound({ rememberPreference: false });
-document.addEventListener('pointerdown', restoreSound, { once: true, capture: true });
-document.addEventListener('keydown', restoreSound, { once: true, capture: true });
+const restoreSound = (event) => {
+  if (event?.target instanceof Element && event.target.closest('.sound-toggle')) return;
+  if (getSoundPreference() === 'off') return;
+  if (!soundPlaying) {
+    startSound({ rememberPreference: false });
+    return;
+  }
+  if (audioContext?.state === 'suspended') {
+    audioContext.resume().then(() => {
+      fadeMasterIn(.55);
+      scheduleMusic();
+    }).catch(() => {});
+  }
+};
+document.addEventListener('pointerdown', restoreSound, { capture: true, passive: true });
+document.addEventListener('touchstart', restoreSound, { capture: true, passive: true });
+document.addEventListener('keydown', restoreSound, { capture: true });
 restoreSound();
 
-document.addEventListener('visibilitychange', () => {
+document.addEventListener('visibilitychange', async () => {
   if (!audioContext || !soundPlaying) return;
-  if (document.hidden) audioContext.suspend();
-  else audioContext.resume();
+  if (document.hidden) {
+    await audioContext.suspend();
+    return;
+  }
+  try {
+    await audioContext.resume();
+    fadeMasterIn(.55);
+    scheduleMusic();
+  } catch (error) {
+    // The next mobile touch retries playback through restoreSound.
+  }
 });
-window.addEventListener('pagehide', () => stopSound({ rememberPreference: false }), { once: true });
+window.addEventListener('pageshow', () => restoreSound());
 
 menuButton.addEventListener('click', () => {
   const expanded = menuButton.getAttribute('aria-expanded') === 'true';
