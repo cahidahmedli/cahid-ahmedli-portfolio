@@ -606,6 +606,12 @@ html[data-theme="dark"] .theme-toggle .moon { opacity: 1; transform: scale(1) ro
   margin-inline: -.03em -.14em;
 }
 
+.case-hero h1 > em {
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: top;
+}
+
 .case-hero h1 em { color: var(--case-accent); font-family: Georgia, "Times New Roman", serif; font-weight: 400; }
 .case-lead { display: flex; justify-content: flex-end; margin-top: clamp(55px, 8vw, 115px); }
 .case-lead p { max-width: 660px; margin: 0; color: var(--muted); font-size: clamp(19px, 2vw, 30px); letter-spacing: -.025em; }

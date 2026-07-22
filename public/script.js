@@ -541,7 +541,8 @@ function updateScrollEffects() {
   inkRevealElements.forEach((element) => {
     const rect = element.getBoundingClientRect();
     const measuredAmount = Math.max(0, Math.min(1, (revealStart - rect.top) / Math.max(revealDistance, rect.height * .7)));
-    const amount = isAtPageEnd && element.closest('.contact') ? 1 : measuredAmount;
+    const completesAtPageEnd = element.closest('.contact, .case-next, .archive-cta');
+    const amount = isAtPageEnd && completesAtPageEnd ? 1 : measuredAmount;
     const progressValue = Math.round(amount * 100);
     element.style.setProperty('--ink-progress', `${progressValue}%`);
     element.style.setProperty('--ink-soft', `${Math.min(100, progressValue + 14)}%`);
