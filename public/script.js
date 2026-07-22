@@ -448,7 +448,6 @@ const inkRevealElements = [...document.querySelectorAll([
   '.hero-title > span',
   '.section-heading h2',
   '.about-statement p',
-  '.stats strong',
   '.contact h2 > span',
   '.contact h2 > em',
   '.archive-hero h1',
@@ -519,10 +518,12 @@ if (window.matchMedia('(pointer: fine)').matches) {
     document.body.classList.add('cursor-active');
 
     const target = event.target instanceof Element ? event.target : null;
-    const overDisplayText = Boolean(target?.closest(displayTextSelector));
-    const overText = Boolean(target?.closest(textSelector));
-    const overInteractive = Boolean(target?.closest('a, button, .project'));
+    const suppressCursor = Boolean(target?.closest('.site-header, .sound-toggle, .stats, .experience'));
+    const overDisplayText = !suppressCursor && Boolean(target?.closest(displayTextSelector));
+    const overText = !suppressCursor && Boolean(target?.closest(textSelector));
+    const overInteractive = !suppressCursor && Boolean(target?.closest('a, button, .project'));
     const timelineRow = target?.closest('.timeline article') || null;
+    document.body.classList.toggle('cursor-suppressed', suppressCursor);
     document.body.classList.toggle('cursor-display', overDisplayText);
     document.body.classList.toggle('cursor-text', !overDisplayText && overText);
     document.body.classList.toggle('cursor-link', !overDisplayText && !overText && overInteractive);
@@ -560,6 +561,6 @@ if (window.matchMedia('(pointer: fine)').matches) {
     activeTimelineRow?.classList.remove('is-hovered');
     activeTimelineRow = null;
     clearCursorColorTarget();
-    document.body.classList.remove('cursor-active', 'cursor-link', 'cursor-text', 'cursor-display');
+    document.body.classList.remove('cursor-active', 'cursor-link', 'cursor-text', 'cursor-display', 'cursor-suppressed');
   });
 }

@@ -842,6 +842,7 @@ html[data-theme="dark"] .theme-toggle .moon { opacity: 1; transform: scale(1) ro
 }
 
 body.cursor-active .cursor-dot { opacity: 1; }
+body.cursor-suppressed .cursor-dot { opacity: 0; }
 body.cursor-link .cursor-dot { width: 52px; height: 52px; }
 body.cursor-text .cursor-dot { width: 92px; height: 92px; }
 body.cursor-display .cursor-dot { width: clamp(150px, 14vw, 230px); height: clamp(150px, 14vw, 230px); }
