@@ -600,6 +600,12 @@ html[data-theme="dark"] .theme-toggle .moon { opacity: 1; transform: scale(1) ro
   line-height: .84;
 }
 
+.case-hero h1 > span,
+.case-hero h1 > em {
+  padding-inline: .03em .14em;
+  margin-inline: -.03em -.14em;
+}
+
 .case-hero h1 em { color: var(--case-accent); font-family: Georgia, "Times New Roman", serif; font-weight: 400; }
 .case-lead { display: flex; justify-content: flex-end; margin-top: clamp(55px, 8vw, 115px); }
 .case-lead p { max-width: 660px; margin: 0; color: var(--muted); font-size: clamp(19px, 2vw, 30px); letter-spacing: -.025em; }
@@ -963,7 +969,8 @@ body.cursor-display .cursor-dot { width: clamp(150px, 14vw, 230px); height: clam
     line-height: .9;
     overflow-wrap: anywhere;
   }
-  .case-hero h1 em { padding-inline-end: .06em; }
+  .case-hero h1 > span,
+  .case-hero h1 > em { padding-inline-end: .14em; }
   .case-pillars { grid-template-columns: 1fr; }
   .case-pillars article { min-height: 260px; }
   .case-pillars h3 { margin-top: 85px; }
