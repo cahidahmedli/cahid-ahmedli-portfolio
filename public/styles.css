@@ -823,6 +823,10 @@ html[data-theme="dark"] .theme-toggle .moon { opacity: 1; transform: scale(1) ro
   background-clip: text;
   color: transparent !important;
   -webkit-background-clip: text;
+  -webkit-box-decoration-break: slice;
+  box-decoration-break: slice;
+  text-shadow: none !important;
+  filter: none !important;
 }
 
 .cursor-layer-above {
